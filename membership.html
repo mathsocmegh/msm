@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Membership | Mathematical Society of Meghalaya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header"><div class="container nav"><a class="brand" href="index.html"><img src="assets/logo.png" alt="MSM logo" /><div class="brand-text"><h1>Mathematical Society of Meghalaya</h1><p>Membership</p></div></a><nav class="nav-links"><a href="index.html">Home</a><a href="constitution.html">Constitution</a><a href="membership.html">Membership</a><a href="events.html">Events</a><a href="gallery.html">Gallery</a></nav></div></header>
+  <main>
+    <section class="section"><div class="container grid-2">
+      <div class="pricing-card">
+        <div class="pricing-badge">Lifetime</div>
+        <div class="pricing-amount"><span class="currency">₹</span>2,000</div>
+        <div class="pricing-period">one-time</div>
+        <div class="pricing-desc">Long-term commitment to the Society's mission and growth.</div>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-badge">Faculty</div>
+        <div class="pricing-amount"><span class="currency">₹</span>500</div>
+        <div class="pricing-period">per year</div>
+        <div class="pricing-desc">For faculty members and teachers in Mathematics.</div>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-badge">Research Scholar</div>
+        <div class="pricing-amount"><span class="currency">₹</span>200</div>
+        <div class="pricing-period">per year</div>
+        <div class="pricing-desc">For research scholars engaged in academic activities.</div>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-badge">Student</div>
+        <div class="pricing-amount"><span class="currency">₹</span>100</div>
+        <div class="pricing-period">per year</div>
+        <div class="pricing-desc">For students interested in mathematical learning and contests.</div>
+      </div>
+    </div></section>
+    <section class="section"><div class="container grid-2">
+      <div class="card"><h4>How to join</h4><p style="color:var(--gold);font-weight:600;">🚧 Registration form coming soon — Under Construction</p></div>
+      <div class="card"><h4>Payment via UPI</h4><p style="color:var(--gold);font-weight:600;">🚧 Payment details coming soon — Under Construction</p></div>
+    </div></section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h3>Life members</h3>
+        </div>
+        <div id="lifeMembers" class="member-grid">
+          <p class="muted-text">Loading members...</p>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h3>Annual members</h3>
+        </div>
+        <div id="annualMembers" class="member-grid">
+          <p class="muted-text">Loading members...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><div class="container footer-bottom">© Mathematical Society of Meghalaya</div></footer>
+  <script src="script.js"></script>
+  <script>
+  // =====================================================
+  // CONFIGURATION — Replace with your published CSV URL
+  // =====================================================
+  // Publish the "Confirmed Members" tab as CSV:
+  //   File → Share → Publish to web → "Confirmed Members" → CSV → Publish
+  var SHEET_CSV_URL = 'YOUR_PUBLISHED_GOOGLE_SHEET_CSV_URL';
+
+  // =====================================================
+  // Fetch and display confirmed members from Google Sheet
+  // =====================================================
+  function parseCSV(text) {
+    var lines = text.trim().split('\n');
+    var headers = lines[0].split(',').map(function(h) { return h.trim().replace(/^"|"$/g, ''); });
+    var rows = [];
+    for (var i = 1; i < lines.length; i++) {
+      var values = lines[i].split(',').map(function(v) { return v.trim().replace(/^"|"$/g, ''); });
+      var row = {};
+      headers.forEach(function(h, idx) { row[h] = values[idx] || ''; });
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  function loadMembers() {
+    if (SHEET_CSV_URL.indexOf('YOUR_') === 0) {
+      document.getElementById('lifeMembers').innerHTML = '<p class="muted-text">Member directory will appear here once configured.</p>';
+      document.getElementById('annualMembers').innerHTML = '<p class="muted-text">Member directory will appear here once configured.</p>';
+      return;
+    }
+    fetch(SHEET_CSV_URL)
+      .then(function(r) { return r.text(); })
+      .then(function(csv) {
+        var members = parseCSV(csv);
+
+        var life = members.filter(function(m) { return m['Member ID'] && m['Member ID'].indexOf('LIF') === 0; });
+        var annual = members.filter(function(m) { return m['Member ID'] && m['Member ID'].indexOf('ANN') === 0; });
+
+        renderMembers('lifeMembers', life, 'No confirmed life members yet.');
+        renderMembers('annualMembers', annual, 'No confirmed annual members yet.');
+      })
+      .catch(function() {
+        document.getElementById('lifeMembers').innerHTML = '<p class="muted-text">Unable to load member data.</p>';
+        document.getElementById('annualMembers').innerHTML = '<p class="muted-text">Unable to load member data.</p>';
+      });
+  }
+
+  function renderMembers(containerId, members, emptyMsg) {
+    var container = document.getElementById(containerId);
+    if (members.length === 0) {
+      container.innerHTML = '<p class="muted-text">' + emptyMsg + '</p>';
+      return;
+    }
+    var html = '';
+    members.forEach(function(m) {
+      html += '<div class="member-chip">'
+            + '<span class="member-id">' + escapeHtml(m['Member ID']) + '</span>'
+            + '<span class="member-name">' + escapeHtml(m['Full Name']) + '</span>'
+            + '<span class="member-inst">' + escapeHtml(m['Institution'] || '') + '</span>'
+            + '<span class="member-validity">' + escapeHtml(m['Valid Until'] || '') + '</span>'
+            + '</div>';
+    });
+    container.innerHTML = html;
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  loadMembers();
+  </script>
+</body>
+</html>
