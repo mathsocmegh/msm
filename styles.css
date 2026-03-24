@@ -526,6 +526,19 @@ td { color: var(--muted); }
   color: var(--muted);
   font-size: 0.92rem;
 }
+.footer-credit {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: rgba(180,191,216,0.72);
+}
+.footer-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.footer-credit a:hover {
+  color: var(--white);
+}
 .tag-row {
   display: flex;
   flex-wrap: wrap;
