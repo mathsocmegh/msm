@@ -167,7 +167,7 @@ li {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('assets/logo.png') no-repeat center center;
+  background: url('assets/MSM_Logo.jpg') no-repeat center center;
   background-size: 320px;
   opacity: 0.06;
   pointer-events: none;
